@@ -1,0 +1,27 @@
+// static/script.js
+document.addEventListener('DOMContentLoaded', () => {
+    const socket = io.connect('http://' + document.domain + ':' + location.port);
+
+    const messageInput = document.getElementById('message-input');
+    const sendButton = document.getElementById('send-button');
+    const messages = document.getElementById('messages');
+
+    socket.on('message', data => {
+        const messageElement = document.createElement('div');
+        messageElement.textContent = data;
+        messages.appendChild(messageElement);
+        messages.scrollTop = messages.scrollHeight;
+    });
+
+    sendButton.onclick = () => {
+        const message = messageInput.value;
+        socket.send(message);
+        messageInput.value = '';
+    };
+
+    messageInput.addEventListener('keyup', (event) => {
+        if (event.key === 'Enter') {
+            sendButton.click();
+        }
+    });
+});
